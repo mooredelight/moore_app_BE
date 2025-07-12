@@ -1,0 +1,25 @@
+name: moore_app_be
+description: A sample command-line application.
+version: 1.0.0
+# repository: https://github.com/mooredelight/moore_app_BE.git
+
+environment:
+  sdk: ^3.7.2
+
+# Add regular dependencies here.
+dependencies:
+  shelf: ^1.4.0
+  shelf_router: ^1.1.4
+  postgres: ^2.6.2
+  dotenv: ^4.0.0
+  yaml: ^3.1.2  # Added for parsing pubspec.yaml
+  test: ^1.26.2
+  crypto: ^3.0.6
+  http: ^1.1.0  # For making HTTP requests and Cloudinary uploads
+  html: ^0.15.4  # For parsing HTML responses
+  uuid: ^4.0.0
+
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.24.0
