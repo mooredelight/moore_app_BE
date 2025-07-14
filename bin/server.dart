@@ -6,6 +6,31 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:postgres/postgres.dart';
 import 'package:dotenv/dotenv.dart' as dotenv;
 
+// CORS middleware to allow cross-origin requests
+Middleware corsMiddleware() {
+  return (Handler innerHandler) {
+    return (Request request) async {
+      if (request.method == 'OPTIONS') {
+        return Response.ok('', headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token, Authorization',
+          'Access-Control-Allow-Credentials': 'true',
+        });
+      }
+      
+      final response = await innerHandler(request);
+      return response.change(headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token, Authorization',
+        'Access-Control-Allow-Credentials': 'true',
+        ...response.headers,
+      });
+    };
+  };
+}
+
 void main(List<String> args) async {
   final env = dotenv.DotEnv()..load();
 
@@ -136,8 +161,9 @@ void main(List<String> args) async {
     return Response.ok(jsonEncode(user), headers: {'Content-Type': 'application/json'});
   });
 
-  final handler = const Pipeline()
+  final handler = Pipeline()
       .addMiddleware(logRequests())
+      .addMiddleware(corsMiddleware()) // Add CORS middleware
       .addHandler(router.call);
 
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
